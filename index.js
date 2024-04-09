@@ -53,10 +53,10 @@ const renderPokeInfo = (pokemon) => {
     pokeInfo.innerHTML = `
     <h2>${pokemon.name}</h2>
     <img src="${pokemon.image}" alt="${pokemon.name}">
-    <p>Types: ${pokemon.types.join(', ')}</p>
-    <p>Weight: ${pokemon.weight}</p>
-    <p>Height: ${pokemon.height}</p>
-    <p>Stats: </p>
+    <p><strong>Types: </strong>${pokemon.types.join(', ')}</p>
+    <p><strong>Weight: </strong>${pokemon.weight}</p>
+    <p><strong>Height: </strong>${pokemon.height}</p>
+    <p><strong>Stats: </strong></p>
     <ul>
         ${Object.entries(pokemon.stats).map(([stat, value]) => 
         `<li>${stat}: ${value}</li>`).join('')}
