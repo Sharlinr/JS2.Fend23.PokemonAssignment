@@ -3,8 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+    <title>Pokemon Application</title>
     <script src="index.js" defer></script>
   </head>
-  <body></body>
+  <body>
+    <main class="container">
+      <h1>Pokemon Application</h1>
+      <div id="pokedex">
+        <label for="pokemonSelect1">Select Pokemon:</label>
+        <select name="Pokemon" id="pokemonSelect1"></select>
+        <label for="pokemonSelect2">Select Second Pokemon:</label>
+        <select name="Pokemon" id="pokemonSelect2"></select>
+        <button id="pokeBtn">Show Pokemon</button>
+        <button id="compareBtn">Compare Pokemons</button>
+        <div id="pokeInfo1"></div>
+        <div id="pokeInfo2"></div>
+        <div id="displayWinner"></div>
+        <div id="battle">
+          <button id="battleBtn">BATTLE</button>
+          <div id="battleInfo"></div>
+        </div>
+      </div>
+    </main>
+  </body>
 </html>
