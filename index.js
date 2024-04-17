@@ -22,33 +22,33 @@ class Pokemon{
         let scndWins = 0;
         let winsCategories = [];
 
-        if(this.weight > secondPokemon.weight) {
+        if (this.weight > secondPokemon.weight) {
             thisWins++;
             winsCategories.push('weight');
-        } else if(this.weight < secondPokemon.weight) {
+        } else if (this.weight < secondPokemon.weight) {
             scndWins++;
             winsCategories.push('weight');
         }
 
-        if(this.height > secondPokemon.height) {
+        if (this.height > secondPokemon.height) {
         thisWins++;
         winsCategories.push('height');
         } else if(this.height < secondPokemon.height) {
         scndWins++;
         winsCategories.push('height');
-}
+        }
 
         this.stats.forEach((stat, index) => {
-            if(stat.value > secondPokemon.stats[index].value){
-            thisWins++;
-            winsCategories.push(stat.name);
+            if (stat.value > secondPokemon.stats[index].value){
+                thisWins++;
+                winsCategories.push(stat.name);
             } else if (stat.value < secondPokemon.stats[index].value){
-            scndWins++;
-            winsCategories.push(stat.name);
+                scndWins++;
+                winsCategories.push(stat.name);
             }
         });
 
-        if(thisWins === 0 && scndWins === 0){
+        if (thisWins === 0 && scndWins === 0) {
             return null;
         }
 
@@ -129,8 +129,10 @@ const displayWins = (thisPoke, otherPoke) => {
 getPokeBtn.addEventListener('click', () => {
     const selectedPokemonName = pokemonSelect1.value;
     const selectedPokemon = pokemons.find(pokemon => pokemon.name === selectedPokemonName);
-    if(selectedPokemon) {
+    if (selectedPokemon) {
         renderPokeInfo(selectedPokemon, pokeInfo1);
+        pokeInfo2.innerHTML = '';
+        displayWinner.textContent = '';
     }
 });
 
