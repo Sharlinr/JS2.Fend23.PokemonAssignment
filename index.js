@@ -3,19 +3,26 @@ const pokemonSelect1 = document.getElementById('pokemonSelect1');
 const pokemonSelect2 = document.getElementById('pokemonSelect2');
 const getPokeBtn = document.getElementById('pokeBtn');
 const compareBtn = document.getElementById('compareBtn');
+const pokeInfo = document.getElementById('pokeInfo');
 const pokeInfo1 = document.getElementById('pokeInfo1');
 const pokeInfo2 = document.getElementById('pokeInfo2');
 const displayWinner = document.getElementById('displayWinner');
+const battleBtn = document.getElementById('battleBtn');
+const battleSection = document.getElementById('battleSection');
+const battleInfo = document.getElementById('battleScoreInfo');
+
 
 let pokemons = [];
 class Pokemon{
-    constructor(name, image, types, weight, height, stats) {
+    constructor(name, image, types, weight, height, stats, moves, hp) {
         this.name = name;
         this.image = image;
         this.types = types;
         this.weight = weight;
         this.height = height;
         this.stats = stats;
+        this.moves = moves;
+        this.hp = hp;
     }
     compare(secondPokemon){
         let thisWins = 0;
@@ -57,9 +64,9 @@ class Pokemon{
 }
 
 const fetchPokeData = async() => {
-    try{
+    try {
         const res = await fetch(apiUrl);
-        if(!res.ok) {
+        if (!res.ok) {
             throw new Error('Poke response NOT Ok');
         }
         const data = await res.json();
@@ -73,8 +80,10 @@ const fetchPokeData = async() => {
             const weight = pokeData.weight;
             const height = pokeData.height;
             const stats = pokeData.stats.map(stat => ({ name: stat.stat.name, value: stat.base_stat }));
+            const moves = pokeData.moves.map(move => ({ name: move.move.name }));
+            const hp = pokeData.stats.find(stat => stat.stat.name === 'hp').base_stat;
         
-        const newPokemon = new Pokemon(name, image, types, weight, height, stats);
+        const newPokemon = new Pokemon(name, image, types, weight, height, stats, moves, hp);
         pokemons.push(newPokemon);
 
         const optionElement1 = document.createElement('option');
@@ -87,8 +96,8 @@ const fetchPokeData = async() => {
 
         pokemonSelect1.appendChild(optionElement1);
         pokemonSelect2.appendChild(optionElement2);    
-    }));
-    } catch(error){
+}));
+    } catch(error) {
         console.error('Error fetching Poke data', error);
     }
 }
@@ -126,6 +135,62 @@ const displayWins = (thisPoke, otherPoke) => {
     }
 }
 
+const attack = (attacker, defender) => {
+    const attackerMove = attacker.moves[0].name;
+    const attackerAttack = attacker.stats.find(stat => stat.name === 'attack').value;
+    const attackerSpecAttack = attacker.stats.find(stat => stat.name === 'special-attack').value;
+    const defenderDefense = defender.stats.find(stat => stat.name === 'defense').value;
+    const defenderSpecDefense = defender.stats.find(stat => stat.name === 'special-defense').value;
+
+    let damage = Math.max((attackerAttack + attackerSpecAttack) - (defenderDefense + defenderSpecDefense) * 0.8, 10);
+    defender.hp -= damage;
+
+    const attackLog = `- ${attacker.name} used ${attackerMove}. ${attacker.name} did ${damage} damage.
+    ${defender.name}s remaining HP: ${defender.hp}.` + '\n';
+
+    battleInfo.textContent += attackLog + '\n';
+
+    if (defender.hp <= 0) {
+        battleInfo.textContent += `- ${defender.name} faints. ${attacker.name} WINS!`;
+        return true;
+    }
+
+    return false;
+};
+
+const startBattle = (poke1, poke2) => {
+    let attacker = poke1;
+    let defender = poke2;
+
+    if(poke2.stats.find(stat => stat.name === 'speed').value > poke1.stats.find( stat => stat.name === 'speed').value) {
+        attacker = poke2;
+        defender = poke1;
+    }
+
+    while(true) {
+        if(attack(attacker, defender)) break;
+        if(attack(defender, attacker)) break;
+    }
+};
+
+const updateBtns = () => {
+    const selectedPokemonName1 = pokemonSelect1.value;
+    const selectedPokemonName2 = pokemonSelect2.value;
+    const selectedPokemon1 = pokemons.find(pokemon => pokemon.name === selectedPokemonName1);
+    const selectedPokemon2 = pokemons.find(pokemon => pokemon.name === selectedPokemonName2);
+
+    if (selectedPokemon1 && selectedPokemon2) {
+        compareBtn.disabled = false;
+        battleBtn.disabled = false;
+    } else {
+        compareBtn.disabled = true;
+        battleBtn.disabled = true;
+    }
+};
+
+pokemonSelect1.addEventListener('change', updateBtns);
+pokemonSelect2.addEventListener('change', updateBtns);
+
 getPokeBtn.addEventListener('click', () => {
     const selectedPokemonName = pokemonSelect1.value;
     const selectedPokemon = pokemons.find(pokemon => pokemon.name === selectedPokemonName);
@@ -141,11 +206,27 @@ compareBtn.addEventListener('click', () => {
     const selectedPokemonName2 = pokemonSelect2.value;
     const selectedPokemon1 = pokemons.find(pokemon => pokemon.name === selectedPokemonName1);
     const selectedPokemon2 = pokemons.find(pokemon => pokemon.name === selectedPokemonName2);
+    
     if (selectedPokemon1 && selectedPokemon2) {
         renderPokeInfo(selectedPokemon1, pokeInfo1);
         renderPokeInfo(selectedPokemon2, pokeInfo2);
         displayWins(selectedPokemon1, selectedPokemon2);
+
+        battleBtn.disabled = false;
+    }
+});
+
+battleBtn.addEventListener('click', () => {
+    const selectedPokemonName1 = pokemonSelect1.value;
+    const selectedPokemonName2 = pokemonSelect2.value;
+    const selectedPokemon1 = pokemons.find(pokemon => pokemon.name === selectedPokemonName1);
+    const selectedPokemon2 = pokemons.find(pokemon => pokemon.name === selectedPokemonName2);
+    if (selectedPokemon1 && selectedPokemon2) {
+        battleInfo.textContent = ''; 
+        startBattle(selectedPokemon1, selectedPokemon2); 
     }
 });
     
 fetchPokeData();
+
+updateBtns();
