@@ -3,6 +3,7 @@ const pokemonSelect1 = document.getElementById('pokemonSelect1');
 const pokemonSelect2 = document.getElementById('pokemonSelect2');
 const getPokeBtn = document.getElementById('pokeBtn');
 const compareBtn = document.getElementById('compareBtn');
+const pokeInfo = document.getElementById('pokeInfo');
 const pokeInfo1 = document.getElementById('pokeInfo1');
 const pokeInfo2 = document.getElementById('pokeInfo2');
 const displayWinner = document.getElementById('displayWinner');
@@ -144,13 +145,13 @@ const attack = (attacker, defender) => {
     let damage = Math.max((attackerAttack + attackerSpecAttack) - (defenderDefense + defenderSpecDefense) * 0.8, 10);
     defender.hp -= damage;
 
-    const attackLog = `${attacker.name} used ${attackerMove}. ${attacker.name} did ${damage} damage.
-    ${defender.name}s remaining HP: ${defender.hp}.`;
+    const attackLog = `- ${attacker.name} used ${attackerMove}. ${attacker.name} did ${damage} damage.
+    ${defender.name}s remaining HP: ${defender.hp}.` + '\n';
 
     battleInfo.textContent += attackLog + '\n';
 
     if (defender.hp <= 0) {
-        battleInfo.textContent += `${defender.name} faints. ${attacker.name} WINS!`;
+        battleInfo.textContent += `- ${defender.name} faints. ${attacker.name} WINS!`;
         return true;
     }
 
